@@ -19,9 +19,31 @@ Seja amigavel e prestativo. Se possivel, use emojis para tornar a conversa mais 
 
 chat_template = ChatPromptTemplate.from_messages(
     [
-        ("system", prompt),
-        ("user", "{mensagens}")
+        ('system', prompt),
+        ('placeholder', "{messages}")
     ]
 )
 
-llm = ChatOpenAI(model="gpt-4o-mini", api_key=open)
+llm = ChatOpenAI(
+    model="gpt-4o-mini",
+    openai_api_key=os.environ['OPENAI_API_KEY']
+)
+
+llm_with_prompt = chat_template | llm
+
+
+def call_chat(message_state: MessagesState):
+    
+    response = llm_with_prompt.invoke(message_state)
+
+    return {
+        'messages': [response]
+    }
+
+graph = StateGraph(MessagesState)
+
+graph.add_node('chat', call_chat)
+
+graph.set_entry_point('chat')
+
+app = graph.compile()
