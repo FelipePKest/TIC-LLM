@@ -1,11 +1,9 @@
 import streamlit as st
 import fitz  # PyMuPDF para leitura de PDFs
-from chatbot import app
+from chatbot_com_contexto import app
 from langchain_core.messages import AIMessage, HumanMessage
-
-from dotenv import load_dotenv
-
-load_dotenv()
+# from chatbot_prompt import get_llm_with_prompt
+from langgraph.graph import StateGraph, MessagesState
 
 st.set_page_config(layout='wide', page_title='Chatbot de loja de bicicletas', page_icon='🚴')
 
@@ -17,12 +15,11 @@ if 'message_history' not in st.session_state:
 # Upload de PDF
 uploaded_file = st.file_uploader("Faça o upload de um PDF para análise", type=["pdf"])
 
+pdf_text = ""
 if uploaded_file is not None:
     with fitz.open(stream=uploaded_file.read(), filetype="pdf") as doc:
         pdf_text = "\n".join([page.get_text("text") for page in doc])
-        print(pdf_text)  # Para depuração, remova em produção
-    st.session_state.message_history.append(HumanMessage(content=f"Texto extraído do PDF:\n{pdf_text}"))
-
+    
 # Entrada do usuário
 user_input = st.chat_input("Digite aqui...")
 
@@ -30,10 +27,11 @@ if user_input:
     st.session_state.message_history.append(HumanMessage(content=user_input))
     
     response = app.invoke({
-        'messages': st.session_state.message_history
+        'question': user_input,
+        'context': [{'page_content': pdf_text}]
     })
     
-    st.session_state.message_history = response['messages']
+    st.session_state.message_history.append(AIMessage(content=response['answer']))
 
 # Exibição das mensagens
 for i in range(1, len(st.session_state.message_history) + 1):
