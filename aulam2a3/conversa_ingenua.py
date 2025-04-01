@@ -13,20 +13,20 @@ model = init_chat_model("gpt-4o-mini", model_provider="openai")
 
 messages = [
    SystemMessage("Traduza o seguinte texto de Ingles para Portugues"),
-   HumanMessage("hi!"),
+   HumanMessage("Hello, how are you?"),
 ]
 
 response = model.invoke(messages)
-# print(response.content)
+print(response.content)
 
 
-system_template = "Traduza o seguinte texto de Ingles para {idioma}"
+system_template = "Traduza o texto anterior de Ingles para Espanhol"
 
 prompt_template = ChatPromptTemplate.from_messages(
-   [("system", system_template), ("user", "{text}")]
+   [("system", system_template)]
 )
 
-prompt = prompt_template.invoke({"idioma": "Portugues", "text": "hi!"})
+prompt = prompt_template.invoke({"idioma": "Portugues"})
 response = model.invoke(prompt)
 
 print(response.content)
