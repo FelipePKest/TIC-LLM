@@ -1,5 +1,5 @@
 import streamlit as st
-import fitz  # PyMuPDF para leitura de PDFs
+from langchain_community.document_loaders import PyPDFLoader  # PyMuPDF para leitura de PDFs
 from chatbot_com_contexto import app
 from langchain_core.messages import AIMessage, HumanMessage
 # from chatbot_prompt import get_llm_with_prompt
@@ -17,8 +17,10 @@ uploaded_file = st.file_uploader("Faça o upload de um PDF para análise", type=
 
 pdf_text = ""
 if uploaded_file is not None:
-    with fitz.open(stream=uploaded_file.read(), filetype="pdf") as doc:
-        pdf_text = "\n".join([page.get_text("text") for page in doc])
+    file_name = uploaded_file.name
+    pdf_loader = PyPDFLoader(file_name)
+    docs = pdf_loader.load()
+    pdf_text = "\n\n".join(doc.page_content for doc in docs)
     
 # Entrada do usuário
 user_input = st.chat_input("Digite aqui...")

@@ -37,6 +37,7 @@ class State(dict):
 graph_builder = StateGraph(State)
 
 def generate(state: State):
+    # print("State", state)
     docs_content = "\n\n".join(doc["page_content"] for doc in state["context"])
     response = qna_chain.invoke({"question": state["question"], "context": docs_content})
     return {"answer": response.content}
