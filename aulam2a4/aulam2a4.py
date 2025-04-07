@@ -2,7 +2,7 @@ import pypdf
 from langchain_openai import ChatOpenAI
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import START, MessagesState, StateGraph
-from langchain.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import PyPDFLoader
 from langgraph.graph import StateGraph, MessagesState
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
