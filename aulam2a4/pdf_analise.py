@@ -1,7 +1,7 @@
-from langchain.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import PyPDFLoader
 
 # Carregar o documento PDF
-loader = PyPDFLoader("clima_brasil.pdf")
+loader = PyPDFLoader("aulam2a4/clima_brasil.pdf")
 docs = loader.load()
 
 # Concatenar todo o texto
