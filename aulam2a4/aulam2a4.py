@@ -14,6 +14,12 @@ class State(dict):
     contexto: list
     resposta: str
 
+def generate(state: State):
+    # Concatenar todo o texto
+    docs_content = "\n\n".join(doc.page_content for doc in state["contexto"])
+    response = qna_chain.invoke({"pergunta": state["pergunta"], "contexto": docs_content})
+    return {"resposta": response.content}
+
 
 template = """
 Responda a pergunta abaixo com base no contexto fornecido. Se a pergunta não puder ser respondida com o contexto, diga que não sabe. Seja amigável e útil.:
@@ -36,12 +42,6 @@ llm = ChatOpenAI(model="gpt-4o-mini")
 qna_chain = prompt | llm
 
 graph_builder = StateGraph(State)
-
-def generate(state: State):
-    # Concatenar todo o texto
-    docs_content = "\n\n".join(doc.page_content for doc in state["contexto"])
-    response = qna_chain.invoke({"pergunta": state["pergunta"], "contexto": docs_content})
-    return {"resposta": response.content}
 
 graph_builder.add_node("generate", generate)
 

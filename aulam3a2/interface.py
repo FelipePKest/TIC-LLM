@@ -14,15 +14,6 @@ st.title("Loja de Bicicletas - Assistente Virtual")
 if 'message_history' not in st.session_state:
     st.session_state.message_history = [AIMessage(content="Olá, sou um assistente virtual para ajudar você a encontrar informações sobre produtos de uma loja de bicicleta. Como posso ajudar você hoje?")]
 
-# Upload de PDF
-uploaded_file = st.file_uploader("Faça o upload de um PDF para análise", type=["pdf"])
-
-if uploaded_file is not None:
-    with fitz.open(stream=uploaded_file.read(), filetype="pdf") as doc:
-        pdf_text = "\n".join([page.get_text("text") for page in doc])
-        print(pdf_text)  # Para depuração, remova em produção
-    st.session_state.message_history.append(HumanMessage(content=f"Texto extraído do PDF:\n{pdf_text}"))
-
 # Entrada do usuário
 user_input = st.chat_input("Digite aqui...")
 
